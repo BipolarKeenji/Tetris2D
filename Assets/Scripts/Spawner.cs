@@ -5,7 +5,8 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
     public GameObject[] tetrominoes;
-    GameObject newTetromino;
+    public static GameObject newTetromino;
+    private GameObject ghostTetromino;
 
     private int roundedPosX;
     private int roundedPosY;
@@ -44,7 +45,74 @@ public class Spawner : MonoBehaviour
             invalidMoves = IsSpawnedPositionInvalid();
         }
 
+        SpawnGhostTetromino();
+
         MoveLastSpawnedTetrominoUp();
+    }
+
+    private void SpawnGhostTetromino()
+    {
+        ghostTetromino = Instantiate(newTetromino, new Vector3(0, 0, 0), Quaternion.identity);
+
+        Destroy(ghostTetromino.GetComponent<Move>());
+
+        FollowGhostTetromino();
+
+        foreach (Transform child in ghostTetromino.transform)
+        {
+            child.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.2f);
+        }
+    }
+
+    public void FollowGhostTetromino()
+    {
+        ghostTetromino.transform.position = newTetromino.transform.position;
+        ghostTetromino.transform.rotation = newTetromino.transform.rotation;
+
+        MoveGhostTetrominoDown();
+    }
+
+    private void MoveGhostTetrominoDown()
+    {
+        while (IsGhostTetrominoMoveValid())
+        {
+            ghostTetromino.transform.position -= new Vector3(0, 1, 0);
+        }
+
+        if (!IsGhostTetrominoMoveValid())
+        {
+            ghostTetromino.transform.position += new Vector3(0, 1, 0);
+        }
+    }
+
+    private bool IsGhostTetrominoMoveValid()
+    {
+        foreach (Transform child in ghostTetromino.transform)
+        {
+            roundedPosX = Mathf.RoundToInt(child.transform.position.x);
+            roundedPosY = Mathf.RoundToInt(child.transform.position.y);
+
+            if (roundedPosX < 0 || roundedPosX >= Move.width || roundedPosY < 0)
+                return false;
+
+            try
+            {
+                if (Move.grid[roundedPosX, roundedPosY])
+                    return false;
+            }
+            catch
+            {
+
+            }
+
+        }
+
+        return true;
+    }
+
+    public void DestroyGhostTetromino()
+    {
+        Destroy(ghostTetromino);
     }
 
     private List<string> IsSpawnedPositionInvalid()

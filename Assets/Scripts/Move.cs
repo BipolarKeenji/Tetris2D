@@ -5,7 +5,7 @@ using UnityEngine;
 public class Move : MonoBehaviour
 {
     private float previousTime;
-    private float moveSpeed = 0.6f;
+    private float moveSpeed = 0.4f;
     public static int width = 10;
     public static int height = 20;
     private int roundedPosX;
@@ -34,7 +34,10 @@ public class Move : MonoBehaviour
                 CheckForLines();
                 this.enabled = false;
                 if (!endOfGame)
+                {
+                    FindObjectOfType<Spawner>().DestroyGhostTetromino();
                     FindObjectOfType<Spawner>().SpawnTetromino();
+                }
             }
 
             previousTime = Time.time;
@@ -43,18 +46,24 @@ public class Move : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             Rotate();
+
+            FindObjectOfType<Spawner>().FollowGhostTetromino();
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
             transform.position -= new Vector3(1, 0, 0);
             if (!IsMoveValid())
                 transform.position += new Vector3(1, 0, 0);
+
+            FindObjectOfType<Spawner>().FollowGhostTetromino();
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
             transform.position += new Vector3(1, 0, 0);
             if (!IsMoveValid())
                 transform.position -= new Vector3(1, 0, 0);
+
+            FindObjectOfType<Spawner>().FollowGhostTetromino();
         }
         else if (Input.GetKeyDown(KeyCode.Space)) 
         {
@@ -64,7 +73,7 @@ public class Move : MonoBehaviour
 
     private void Rotate()
     {
-        if (transform.name != "Tetromino O(Clone)")
+        if (!transform.name.Contains("Tetromino O"))
         {
             transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), -90);
 
