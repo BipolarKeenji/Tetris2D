@@ -64,7 +64,6 @@ public class Move : MonoBehaviour
 
     private void Rotate()
     {
-        string test = transform.name;
         if (transform.name != "Tetromino O(Clone)")
         {
             transform.RotateAround(transform.TransformPoint(rotationPoint), new Vector3(0, 0, 1), -90);
@@ -88,24 +87,20 @@ public class Move : MonoBehaviour
                     {
                         transform.position += new Vector3(1, 0, 0);
                         roundedPosX = Mathf.RoundToInt(child.transform.position.x);
-                        roundedPosY = Mathf.RoundToInt(child.transform.position.y);
                     }
                     while (roundedPosX >= width)
                     {
                         transform.position -= new Vector3(1, 0, 0);
                         roundedPosX = Mathf.RoundToInt(child.transform.position.x);
-                        roundedPosY = Mathf.RoundToInt(child.transform.position.y);
                     }
                     while (roundedPosY <= 0)
                     {
                         transform.position += new Vector3(0, 1, 0);
-                        roundedPosX = Mathf.RoundToInt(child.transform.position.x);
                         roundedPosY = Mathf.RoundToInt(child.transform.position.y);
                     }
                     while (roundedPosY >= height)
                     {
                         transform.position -= new Vector3(0, 1, 0);
-                        roundedPosX = Mathf.RoundToInt(child.transform.position.x);
                         roundedPosY = Mathf.RoundToInt(child.transform.position.y);
                     }
                 }
